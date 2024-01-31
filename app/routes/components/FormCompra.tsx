@@ -26,7 +26,6 @@ import type { action } from "../receitas.nova";
 import Drawerfornecedor from "./Drawer-Fornecedor";
 
 export default function FormCompra(fornecedores: any, compra?: any) {
-	console.log(fornecedores);
 	const data = useActionData<typeof action>();
 	const [form, fields] = useForm({
 		lastSubmission: data,
@@ -34,8 +33,6 @@ export default function FormCompra(fornecedores: any, compra?: any) {
 
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(compra?.fornecedor?.toLowerCase());
-	console.log(value);
-	// const [value, setValue] = useState(fornecedores?.nome);
 	const [date, setDate] = useState<Date | undefined>(
 		compra?.data ? new Date(compra?.data) : new Date()
 	);
@@ -46,7 +43,7 @@ export default function FormCompra(fornecedores: any, compra?: any) {
 				<input
 					hidden
 					readOnly
-					defaultValue={value?.charAt(0).toUpperCase() + value?.substring(1)}
+					value={value?.charAt(0).toUpperCase() + value?.substring(1)}
 					name='fornecedor'
 					id='fornecedor'
 				/>

@@ -63,3 +63,9 @@ model contas {
     etiqueta String
     conta    String
 }
+
+model estoque {
+    id    String   @id @default(auto()) @map("_id") @db.ObjectId
+    valor Float
+    data  DateTime
+}

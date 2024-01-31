@@ -5,7 +5,7 @@ export const getReceitas = async () => {
     orderBy: {
         data: 'desc'
     },
-    take: 200
+    take: 400
   });
 };
 export const getReceita = async (receitaId: string) => {

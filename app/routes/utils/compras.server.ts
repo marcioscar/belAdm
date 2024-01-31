@@ -8,6 +8,14 @@ export const getCompras = async () => {
     take: 300
   });
 };
+export const getEstoque = async () => {
+  return prisma.estoque.findMany({
+    orderBy: {
+        data: 'asc'
+    },
+    
+  });
+};
 
 export const getFornecedores = async () => {
   return prisma.fornecedores.findMany({
