@@ -18,7 +18,7 @@ export default function Sidebar() {
 			aria-label='Sidebar'>
 			<div className='flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4 dark:border-slate-700 dark:bg-slate-900'>
 				<Link to='/' className='mb-6 flex items-center  w-full'>
-					<img src='/images/logo.svg' alt='logo' />
+					<img src='/images/adm.svg' alt='logo' />
 				</Link>
 				<ul className='space-y-2 text-sm font-medium'>
 					<div className=' font-semibold pl-1'>Receitas</div>
