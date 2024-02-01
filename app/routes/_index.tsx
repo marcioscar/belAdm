@@ -119,14 +119,19 @@ export default function Index() {
 
 	return (
 		<>
-			<div className='flex mt-10 justify-center items-center'>
+			<img
+				alt='logo'
+				src='/images/adm.svg'
+				className='w-1/4 mt-3 container text-center'
+			/>
+			<div className='flex mt-10 justify-center  mb-4 items-center'>
 				<label className='mr-4 font-light   text-sm ' htmlFor='rec'>
 					MÊS E ANO DE REFERÊNCIA
 				</label>
 
 				<IoMdArrowDropright />
 				<select
-					className='rounded text-blue-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
+					className='rounded text-zinc-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
 					name='rec'
 					defaultValue={format(new Date(), "MMM-yyyy", { locale: pt })}
 					value={value}
@@ -150,7 +155,7 @@ export default function Index() {
 				</select>
 			</div>
 
-			<div className='grid gap-4 mt-2 container px-2 mx-auto    md:grid-cols-2 xl:grid-cols-3 '>
+			<div className='grid gap-4 mt-2 container px-2 mx-auto  md:grid-cols-2 xl:grid-cols-3 '>
 				<Card>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl font-medium'>Receitas</CardTitle>

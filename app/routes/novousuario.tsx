@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { requireUserSession, signup } from "./utils/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -18,7 +18,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Novousuario() {
-	const data = useLoaderData<typeof loader>();
 	return (
 		<div className='flex min-h-full flex-1 flex-col mt-20 sm:px-6 lg:px-8'>
 			<div className='sm:mx-auto sm:w-full sm:max-w-md'>
