@@ -10,8 +10,10 @@ import {
 	createFornecedor,
 	getFornecedores,
 } from "./utils/compras.server";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const fornecedores = await getFornecedores();
 	return json({ fornecedores });
 };

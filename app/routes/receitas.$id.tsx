@@ -3,8 +3,10 @@ import { json, redirect, useLoaderData } from "@remix-run/react";
 import { getFormas, getReceita, updateReceita } from "./utils/receitas.server";
 import FormRec from "./components/FormRec";
 import { getFornecedores } from "./utils/compras.server";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const receita = await getReceita(params.id as string);
 	const formas = await getFormas();
 

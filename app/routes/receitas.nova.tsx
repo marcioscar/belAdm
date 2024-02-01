@@ -6,8 +6,10 @@ import { parse } from "@conform-to/zod";
 import { createForm, createReceita, getFormas } from "./utils/receitas.server";
 import FormRec from "./components/FormRec";
 import { redirect } from "@vercel/remix";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const formas = await getFormas();
 	return json({ formas });
 };

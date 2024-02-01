@@ -26,8 +26,10 @@ import {
 	getContas,
 	getFornecedores,
 } from "./utils/despesas.server";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const fornecedores = await getFornecedores();
 	const contas = await getContas();
 	return json({ fornecedores, contas });

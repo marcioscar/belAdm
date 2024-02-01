@@ -7,7 +7,9 @@ import {
 import { redirect, useLoaderData } from "@remix-run/react";
 import { columns } from "./components/Reccolumns";
 import { DataTable } from "./components/Data-table";
+import { requireUserSession } from "./utils/auth.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const receitas = await getReceitas();
 	return receitas;
 };

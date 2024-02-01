@@ -24,8 +24,10 @@ import {
 import { getFornecedores } from "./utils/compras.server";
 import FormDespesa from "./components/FormDespesa";
 import { s3UploadHandler } from "./utils/s3.server";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const despesa = await getDespesa(params.id as string);
 	const fornecedores = await getFornecedores();
 	const contas = await getContas();

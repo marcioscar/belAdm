@@ -17,7 +17,9 @@ import { useState } from "react";
 import { getMonth, getYear } from "date-fns";
 import { getCompras, getEstoque } from "./utils/compras.server";
 import Fluxomes from "./components/Fluxomes";
+import { requireUserSession } from "./utils/auth.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const receitas = await getReceitas();
 	const despesas = await getDespesas();
 	const compras = await getCompras();
@@ -101,7 +103,8 @@ export default function Index() {
 
 	const estoqueMesAnterior = _.filter(estoque, (item) => {
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) === mes;
+
+		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes - 1;
 	});
 
 	const estoqueAtual = parseFloat(
@@ -110,8 +113,8 @@ export default function Index() {
 	const estoqueAnterior = parseFloat(
 		estoqueMesAnterior.map((e) => e.valor).toString()
 	);
-	const estoqueAnteriorprov = 693086;
-	const CMV = estoqueAnteriorprov + compraMesTotal - estoqueAtual;
+
+	const CMV = estoqueAnterior + compraMesTotal - estoqueAtual;
 	//fim estoque
 
 	return (

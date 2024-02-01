@@ -119,15 +119,21 @@ export default function Fluxomes(
 
 	return (
 		<Table className='border mt-2 border-stone-100  '>
-			<TableHeader className='bg-stone-200'>
+			<TableHeader className='bg-zinc-400'>
 				<TableRow>
-					<TableHead className='font-medium text-center'>Descrição</TableHead>
-					<TableHead className='font-medium text-right'>Valor</TableHead>
-					<TableHead className='font-medium text-center'>AV</TableHead>
+					<TableHead className=' text-white font-medium text-center'>
+						Descrição
+					</TableHead>
+					<TableHead className='text-white font-medium text-right'>
+						Valor
+					</TableHead>
+					<TableHead className='text-white font-medium text-center'>
+						AV
+					</TableHead>
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				<TableRow className='bg-stone-100 text-blue-600'>
+				<TableRow className='bg-zinc-300 text-blue-600'>
 					<TableCell className='font-medium '>Lucro Operacional CMV</TableCell>
 					<TableCell className='font-mono text-right'>
 						{lucroOperacionalCMV.toLocaleString("pt-br", {
@@ -141,7 +147,7 @@ export default function Fluxomes(
 						}).format(lucroOperacionalCMV / recMesTotal)}
 					</TableCell>
 				</TableRow>
-				<TableRow className='bg-stone-100 text-green-600'>
+				<TableRow className='bg-zinc-200 text-green-600'>
 					<TableCell className='font-medium'>Lucro Operacional</TableCell>
 					<TableCell className='font-mono text-right'>
 						{lucroOperacional.toLocaleString("pt-br", {
@@ -155,7 +161,7 @@ export default function Fluxomes(
 						}).format(lucroOperacional / recMesTotal)}
 					</TableCell>
 				</TableRow>
-				<TableRow className=' text-violet-700'>
+				<TableRow className=' bg-zinc-100 text-violet-700'>
 					<TableCell className='font-medium'>Ponto de Equilíbrio</TableCell>
 					<TableCell className='font-mono text-right'>
 						{pontoEquilibrio.toLocaleString("pt-br", {

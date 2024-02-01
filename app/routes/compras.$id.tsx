@@ -7,8 +7,10 @@ import {
 	updateCompra,
 } from "./utils/compras.server";
 import FormCompra from "./components/FormCompra";
+import { requireUserSession } from "./utils/auth.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const compra = await getCompra(params.id as string);
 	const fornecedores = await getFornecedores();
 	return json({ fornecedores, compra });

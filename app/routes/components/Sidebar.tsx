@@ -1,5 +1,13 @@
-import { Link } from "@remix-run/react";
-import { FcBullish, FcBearish, FcShipped, FcAddDatabase } from "react-icons/fc";
+import { Form, Link } from "@remix-run/react";
+import { Button } from "react-day-picker";
+import {
+	FcBullish,
+	FcBearish,
+	FcShipped,
+	FcAddDatabase,
+	FcGoodDecision,
+	FcSportsMode,
+} from "react-icons/fc";
 
 export default function Sidebar() {
 	return (
@@ -52,31 +60,25 @@ export default function Sidebar() {
 							<span className='ml-3 flex-1 whitespace-nowrap'>Nova</span>
 						</div>
 					</Link>
-				</ul>
-				{/* <div className='mt-auto flex'>
-						<div className='flex w-full justify-between'>
-							<span className='text-sm font-medium text-black dark:text-white'>
-								email@example.com
+					<div className=' font-semibold pl-1'>Usuários</div>
+					<Link to='/novousuario'>
+						<div className='flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700'>
+							<FcGoodDecision className='w-6 h-6' />
+							<span className='ml-3 flex-1 whitespace-nowrap'>
+								Novo Usuário
 							</span>
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
-								width='24'
-								height='24'
-								viewBox='0 0 24 24'
-								aria-roledescription='more menu'
-								fill='none'
-								stroke='currentColor'
-								stroke-width='2'
-								className='h-5 w-5 text-black dark:text-white'
-								stroke-linecap='round'
-								stroke-linejoin='round'
-								className='lucide lucide-more-horizontal'>
-								<circle cx='12' cy='12' r='1' />
-								<circle cx='19' cy='12' r='1' />
-								<circle cx='5' cy='12' r='1' />
-							</svg>
 						</div>
-					</div> */}
+					</Link>
+
+					<Form
+						className='flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700'
+						method='post'
+						action='/logout'
+						id='logout-form'>
+						<FcSportsMode className='w-6 h-6' />
+						<button className=' text-left ml-3 flex-1 '>Sair</button>
+					</Form>
+				</ul>
 			</div>
 		</aside>
 		// </div>

@@ -4,7 +4,9 @@ import { redirect, useLoaderData } from "@remix-run/react";
 import { columns } from "./components/Despcolumns";
 import { DataTable } from "./components/Data-table";
 import { deleteDespesa, getDespesas } from "./utils/despesas.server";
+import { requireUserSession } from "./utils/auth.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
+	await requireUserSession(request);
 	const despesas = await getDespesas();
 	return despesas;
 };
