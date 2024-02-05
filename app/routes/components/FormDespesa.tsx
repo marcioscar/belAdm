@@ -188,7 +188,7 @@ export default function FormDespesa(
 												setValueConta(
 													currentValue === valueConta ? "" : currentValue
 												);
-												setOpen(false);
+												setOpenConta(false);
 											}}>
 											<Check
 												className={cn(
