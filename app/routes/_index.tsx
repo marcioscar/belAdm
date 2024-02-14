@@ -286,7 +286,7 @@ export default function Index() {
 						</div>
 					</CardContent>
 				</Card>
-				<Card className='xl:col-span-2'>
+				<Card className='xl:col-span-3'>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Carteiras</CardTitle>
 						<Badge
@@ -298,7 +298,7 @@ export default function Index() {
 							})}
 						</Badge>
 					</CardHeader>
-					<CardContent className='grid grid-cols-4 place-items-center  mt-4  '>
+					<CardContent className='grid grid-cols-4 xl:grid-cols-7 place-items-center  mt-4  '>
 						{recCarteira().map((l) => (
 							<div
 								key={l.carteira}
