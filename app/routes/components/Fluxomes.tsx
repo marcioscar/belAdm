@@ -19,12 +19,12 @@ import _ from "lodash";
 
 export default function Fluxomes(
 	receitas: any,
-	value: any,
+	numberMouth: any,
 	despesas: any,
 	CMV: any
 ) {
 	const ano = getYear(new Date());
-	const mes = getMonth(new Date(`2024/${value}`)) + 1;
+	const mes = getMonth(new Date(`2024/${numberMouth}`)) + 1;
 
 	//receitas
 	const recMes = _.filter(receitas, (item) => {

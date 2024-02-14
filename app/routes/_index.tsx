@@ -1,10 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-	json,
-	type ActionFunctionArgs,
-	type LoaderFunctionArgs,
-} from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { getDespesas } from "./utils/despesas.server";
 import { getReceitas } from "./utils/receitas.server";
 import { useLoaderData } from "@remix-run/react";
@@ -26,21 +22,20 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const estoque = await getEstoque();
 	return json({ despesas, receitas, compras, estoque });
 };
-export const action = async ({ request }: ActionFunctionArgs) => {
-	return null;
-};
 
 export default function Index() {
 	const { receitas, despesas, compras, estoque } =
 		useLoaderData<typeof loader>();
 
-	const [value, setValue] = useState(format(new Date(), "MM", { locale: pt }));
+	const [numberMounth, setMumberMounth] = useState(
+		format(new Date(), "MM", { locale: pt })
+	);
 	const handleSelectChange = (event: any) => {
-		setValue(event.target.value);
+		setMumberMounth(event.target.value);
 	};
 
 	const ano = getYear(new Date());
-	const mes = getMonth(new Date(`2024/${value}`)) + 1;
+	const mes = getMonth(new Date(`2024/${numberMounth}`)) + 1;
 
 	//receitas
 	const recMes = _.filter(receitas, (item) => {
@@ -149,7 +144,7 @@ export default function Index() {
 					className='rounded text-zinc-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
 					name='rec'
 					defaultValue={format(new Date(), "MMM-yyyy", { locale: pt })}
-					value={value}
+					value={numberMounth}
 					onChange={handleSelectChange}>
 					{/* // onChange={(event) => rec.submit(event.target.form)}> */}
 					<option hidden={true} value=''>
@@ -289,14 +284,14 @@ export default function Index() {
 				<Card className='xl:col-span-3'>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Carteiras</CardTitle>
-						<Badge
+						{/* <Badge
 							variant='outline'
 							className='font-normal  text-sm  font-mono'>
 							{recMesTotal.toLocaleString("pt-BR", {
 								minimumFractionDigits: 2,
 								maximumFractionDigits: 2,
 							})}
-						</Badge>
+						</Badge> */}
 					</CardHeader>
 					<CardContent className='grid grid-cols-4 xl:grid-cols-7 place-items-center  mt-4  '>
 						{recCarteira().map((l) => (
@@ -318,7 +313,7 @@ export default function Index() {
 				</Card>
 			</div>
 			<div className='container p-1 mx-auto'>
-				{Fluxomes(receitas, value, despesas, CMV)}
+				{Fluxomes(receitas, numberMounth, despesas, CMV)}
 			</div>
 		</>
 	);
