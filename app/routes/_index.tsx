@@ -303,8 +303,8 @@ export default function Index() {
 									maximumFractionDigits: 2,
 								})}
 								<Badge
-									variant='secondary'
-									className=' w-full   place-content-center text-center  mt-1 font-light text-blue-800  text-xs '>
+									variant='outline'
+									className=' w-full  shadow-sm  place-content-center text-center  mt-1 font-light text-purple-600  text-xs '>
 									{l.carteira}
 								</Badge>
 							</div>
