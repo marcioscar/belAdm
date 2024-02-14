@@ -25,6 +25,7 @@ model receitas {
     loja      String
     data      DateTime
     status    String?
+    carteira  String?
 }
 
 model despesas {

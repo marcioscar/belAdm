@@ -24,6 +24,7 @@ export type Receitas = {
 	valor: number;
 	descricao: string;
 	loja: string;
+	carteira: string;
 	data: string;
 };
 
@@ -73,6 +74,10 @@ export const columns: ColumnDef<Receitas>[] = [
 				{format(row.getValue("data"), "dd  MMM  yyyy", { locale: ptBR })}
 			</div>
 		),
+	},
+	{
+		accessorKey: "carteira",
+		header: "Carteira",
 	},
 	{
 		accessorKey: "status",

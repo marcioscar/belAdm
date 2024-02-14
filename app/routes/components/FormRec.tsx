@@ -44,6 +44,41 @@ export default function FormRec(formas: any, receita?: any) {
 			loja: "sds",
 		},
 	];
+	const carteiras = [
+		{
+			etiqueta: "Bradesco QI",
+			carteira: "bradesco_qi",
+		},
+		{
+			etiqueta: "Bradesco NRT",
+			carteira: "bradesco_nrt",
+		},
+		{
+			etiqueta: "Bradesco SDS",
+			carteira: "bradesco_sds",
+		},
+		{
+			etiqueta: "Inter QI",
+			carteira: "inter_qi",
+		},
+		{
+			etiqueta: "Inter NRT",
+			carteira: "inter_nrt",
+		},
+		{
+			etiqueta: "Inter SDS",
+			carteira: "inter_sds",
+		},
+		{
+			etiqueta: "Dinheiro",
+			carteira: "dinheiro",
+		},
+		{
+			etiqueta: "Cheque",
+			carteira: "cheque",
+		},
+	];
+
 	const data = useActionData<typeof action>();
 	const [form, fields] = useForm({
 		lastSubmission: data,
@@ -51,8 +86,11 @@ export default function FormRec(formas: any, receita?: any) {
 
 	const [open, setOpen] = useState(false);
 	const [openL, setOpenL] = useState(false);
+	const [openC, setOpenC] = useState(false);
 	const [value, setValue] = useState(receita?.conta.toLowerCase());
 	const [valueL, setValueL] = useState(receita?.loja.toLowerCase());
+	const [valueC, setValueC] = useState(receita?.carteira?.toLowerCase());
+	console.log(valueC);
 	const [date, setDate] = useState<Date | undefined>(
 		receita?.data ? new Date(receita?.data) : new Date()
 	);
@@ -66,6 +104,7 @@ export default function FormRec(formas: any, receita?: any) {
 			<Form className=' mx-auto  w-3/4 ' method='post' {...form.props}>
 				<input hidden readOnly value={value} name='conta' id='conta' />
 				<input hidden readOnly value={valueL} name='loja' id='loja' />
+				<input hidden readOnly value={valueC} name='carteira' id='carteira' />
 				<input type='text' hidden readOnly value={date} name='date' id='date' />
 				<FormItem>
 					<div className='flex space-x-4 items-center mb-1 '>
@@ -113,7 +152,7 @@ export default function FormRec(formas: any, receita?: any) {
 						</PopoverContent>
 					</Popover>
 				</FormItem>
-				<FormItem className='mt-2'>
+				<FormItem className='mt-3'>
 					<Label htmlFor='forma'>Valor</Label>
 					<Input
 						type='text'
@@ -125,7 +164,7 @@ export default function FormRec(formas: any, receita?: any) {
 					/>
 					<div className=' text-sm text-red-500'>{fields.valor.errors}</div>
 				</FormItem>
-				<FormItem className='mt-2'>
+				<FormItem className='mt-3'>
 					<Label htmlFor='descricao'>Descrição</Label>
 					<Input
 						type='text'
@@ -138,7 +177,7 @@ export default function FormRec(formas: any, receita?: any) {
 					)} */}
 					<div className=' text-sm text-red-500'>{fields.descricao.errors}</div>
 				</FormItem>
-				<FormItem>
+				<FormItem className='mt-3'>
 					<Label htmlFor='loja'>Loja</Label>
 					<Popover open={openL} onOpenChange={setOpenL}>
 						<PopoverTrigger asChild>
@@ -182,7 +221,57 @@ export default function FormRec(formas: any, receita?: any) {
 						</PopoverContent>
 					</Popover>
 				</FormItem>
-				<FormItem>
+				<FormItem className='mt-3'>
+					<Label htmlFor='carteira'>Carteira</Label>
+					<Popover open={openC} onOpenChange={setOpenC}>
+						<PopoverTrigger asChild>
+							<Button
+								variant='outline'
+								role='combobox'
+								aria-expanded={open}
+								className='w-full justify-between text-zinc-500'>
+								{valueC
+									? carteiras.find(
+											(carteiras: any) => carteiras.carteira === valueC
+									  )?.etiqueta
+									: "Carteira..."}
+								<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent
+							id='carteira'
+							className='w-full p-2 rounded-xl my-2'>
+							<Command id='carteira'>
+								<CommandInput placeholder='Procurar carteira...' />
+								<CommandEmpty>Carteira não encontrada</CommandEmpty>
+								<CommandGroup>
+									{carteiras?.map((carteiras: any) => (
+										<CommandItem
+											key={carteiras.carteira}
+											value={carteiras.carteira}
+											onSelect={(currentValueC) => {
+												setValueC(
+													currentValueC === valueC ? "" : currentValueC
+												);
+												setOpenC(false);
+											}}>
+											<Check
+												className={cn(
+													"mr-2 h-4 w-4",
+													valueC === carteiras.carteira
+														? "opacity-100"
+														: "opacity-0"
+												)}
+											/>
+											{carteiras.etiqueta}
+										</CommandItem>
+									))}
+								</CommandGroup>
+							</Command>
+						</PopoverContent>
+					</Popover>
+				</FormItem>
+				<FormItem className='mt-3'>
 					<Label>Status</Label>
 					<RadioGroup
 						name='status'

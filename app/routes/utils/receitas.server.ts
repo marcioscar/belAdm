@@ -8,8 +8,10 @@ export const getReceitas = async () => {
     take: 400
   });
 };
+
+
+
 export const getReceita = async (receitaId: string) => {
-    
   return prisma.receitas.findUnique({
     where: {
       id: receitaId,
@@ -18,7 +20,7 @@ export const getReceita = async (receitaId: string) => {
 };
 
 export const updateReceita = async (receita: any) => {
-  
+  console.log(receita)
   const newReceita = await prisma.receitas.update({
     where: {
       id: receita.id,
@@ -30,6 +32,7 @@ export const updateReceita = async (receita: any) => {
         descricao: receita.descricao,
         loja : receita.loja.toUpperCase(), 
         status: receita.status,
+        carteira   : receita.carteira
     },
   });
   return { newReceita };
@@ -44,7 +47,8 @@ export const createReceita = async(receita:any)=>{
     descricao: receita.descricao,
     loja : receita.loja.toUpperCase(),     
     data    : new Date(receita.date) ,
-    status   : receita.status
+    status   : receita.status,
+    carteira   : receita.carteira
     }
 })
 

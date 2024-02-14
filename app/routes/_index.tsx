@@ -47,11 +47,26 @@ export default function Index() {
 		const itemDate = new Date(item.data);
 		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
 	});
+
+	// function recMesCarteira(cart: string) {
+	// 	const carteiraFilter = _.filter(recMes, {
+	// 		carteira: cart,
+	// 	});
+	// 	return carteiraFilter;
+	// }
+
 	const recMesTotal = _.sumBy(recMes, "valor");
 
 	function recLoja() {
 		const tot = _.map(_.groupBy(recMes, "loja"), (loja, idx) => {
 			return { loja: idx, valor: _.sumBy(loja, "valor") };
+		});
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
+
+	function recCarteira() {
+		const tot = _.map(_.groupBy(recMes, "carteira"), (carteira, idx) => {
+			return { carteira: idx, valor: _.sumBy(carteira, "valor") };
 		});
 
 		return _.orderBy(tot, ["valor"], ["desc"]);
@@ -212,7 +227,7 @@ export default function Index() {
 						))}
 					</CardContent>
 				</Card>
-				<Card>
+				<Card className=''>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Compras</CardTitle>
 						<Badge
@@ -269,6 +284,36 @@ export default function Index() {
 								Fixas Total
 							</Badge>
 						</div>
+					</CardContent>
+				</Card>
+				<Card className='xl:col-span-2'>
+					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+						<CardTitle className=' text-xl  font-medium'>Carteiras</CardTitle>
+						<Badge
+							variant='outline'
+							className='font-normal  text-sm  font-mono'>
+							{recMesTotal.toLocaleString("pt-BR", {
+								minimumFractionDigits: 2,
+								maximumFractionDigits: 2,
+							})}
+						</Badge>
+					</CardHeader>
+					<CardContent className='grid grid-cols-4 place-items-center  mt-4  '>
+						{recCarteira().map((l) => (
+							<div
+								key={l.carteira}
+								className=' grid  place-items-center text-sm'>
+								{l.valor.toLocaleString("pt-BR", {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								})}
+								<Badge
+									variant='secondary'
+									className=' w-full   place-content-center text-center  mt-1 font-light text-blue-800  text-xs '>
+									{l.carteira}
+								</Badge>
+							</div>
+						))}
 					</CardContent>
 				</Card>
 			</div>

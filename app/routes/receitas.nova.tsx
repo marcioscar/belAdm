@@ -58,6 +58,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 			loja: z.string({ required_error: "Preencha a loja" }).min(1),
 			date: z.string({ required_error: "Preencha a Data" }).min(1),
 			status: z.string({ required_error: "Preencha o Status" }).min(1),
+			carteira: z.string({ required_error: "Preencha o Carteira" }).min(1),
 		}),
 	});
 	if (submission.intent !== "submit" || !submission.value) {
