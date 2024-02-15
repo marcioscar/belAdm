@@ -132,16 +132,18 @@ export default function Index() {
 			<img
 				alt='logo'
 				src='/images/adm.svg'
-				className='w-1/4 mt-3 container text-center'
+				className=' w-3/4 md:w-1/4 mt-3 container text-center'
 			/>
 			<div className='flex mt-10 justify-center  mb-4 items-center'>
-				<label className='mr-4 font-light   text-sm ' htmlFor='rec'>
+				<label
+					className=' hidden md:block mr-4 font-light   text-sm '
+					htmlFor='rec'>
 					MÊS E ANO DE REFERÊNCIA
 				</label>
 
-				<IoMdArrowDropright />
+				<IoMdArrowDropright className='hidden md:block' />
 				<select
-					className='rounded text-zinc-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
+					className=' rounded text-zinc-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
 					name='rec'
 					defaultValue={format(new Date(), "MMM-yyyy", { locale: pt })}
 					value={numberMounth}
@@ -281,7 +283,7 @@ export default function Index() {
 						</div>
 					</CardContent>
 				</Card>
-				<Card className='xl:col-span-3'>
+				<Card className='xl:col-span-3 shadow border border-white/50 bg-white/80'>
 					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Carteiras</CardTitle>
 						{/* <Badge

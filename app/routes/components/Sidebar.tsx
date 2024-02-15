@@ -14,7 +14,7 @@ export default function Sidebar() {
 		// <div className='h-screen w-screen bg-white dark:bg-slate-900'>
 		<aside
 			id='sidebar'
-			className='sticky top-4 h-[calc(100vh-theme(spacing.16))] w-48 overflow-y-auto'
+			className='hidden md:block sticky top-4 h-[calc(100vh-theme(spacing.16))] w-48 overflow-y-auto'
 			aria-label='Sidebar'>
 			<div className='flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4 dark:border-slate-700 dark:bg-slate-900'>
 				<Link to='/' className='mb-6 flex items-center  w-full'>
