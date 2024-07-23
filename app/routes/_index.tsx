@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { getDespesas } from "./utils/despesas.server";
+import { getDespesas, getTransferencias } from "./utils/despesas.server";
 import { getReceitas } from "./utils/receitas.server";
 import { useLoaderData } from "@remix-run/react";
 
@@ -20,18 +20,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const despesas = await getDespesas();
 	const compras = await getCompras();
 	const estoque = await getEstoque();
-	return json({ despesas, receitas, compras, estoque });
+	const transferencias = await getTransferencias();
+	return json({ despesas, receitas, compras, estoque, transferencias });
 };
 
 export default function Index() {
-	const { receitas, despesas, compras, estoque } =
+	const { receitas, despesas, compras, estoque, transferencias } =
 		useLoaderData<typeof loader>();
 
 	const [numberMounth, setMumberMounth] = useState(
 		format(new Date(), "MM", { locale: pt })
 	);
+	const [store, setStore] = useState("todas");
+
 	const handleSelectChange = (event: any) => {
 		setMumberMounth(event.target.value);
+	};
+
+	const handleStore = (event: any) => {
+		setStore(event.target.value);
 	};
 
 	const ano = getYear(new Date());
@@ -40,15 +47,15 @@ export default function Index() {
 	//receitas
 	const recMes = _.filter(receitas, (item) => {
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+		const loja = store;
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.loja === loja.toUpperCase();
 	});
-
-	// function recMesCarteira(cart: string) {
-	// 	const carteiraFilter = _.filter(recMes, {
-	// 		carteira: cart,
-	// 	});
-	// 	return carteiraFilter;
-	// }
 
 	const recMesTotal = _.sumBy(recMes, "valor");
 
@@ -70,18 +77,35 @@ export default function Index() {
 	//fim receitas
 
 	//despesas
+
 	const despMes = _.filter(despesas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.loja === loja;
 	});
 
+	// const despMesBack = _.filter(despesas, (item) => {
+	// 	const itemDate = new Date(item.data);
+	// 	return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+	// });
+
 	const despMesFixa = _.filter(despesas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return (
-			getYear(itemDate) === ano &&
-			getMonth(itemDate) + 1 === mes &&
-			item.tipo === "fixa"
-		);
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "fixa"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "fixa" &&
+					item.loja === loja;
 	});
 	const despMesTotal = _.sumBy(despMes, "valor");
 	const despMesFixaTotal = _.sumBy(despMesFixa, "valor");
@@ -103,28 +127,86 @@ export default function Index() {
 	});
 	const compraMesTotal = _.sumBy(ComprasMes, "valor");
 
+	//compras lojas -> Transferencias
+
+	const transferenciaMes = _.filter(transferencias, (item) => {
+		const loja = store;
+		const itemDate = new Date(item.data);
+		return (
+			getYear(itemDate) === ano &&
+			getMonth(itemDate) + 1 === mes &&
+			item.destino === loja
+		);
+	});
+
+	const transferenciaMesTotal = _.sumBy(transferenciaMes, "valor");
+
 	//fim compras
 
 	//estoque
 	const estoqueMesAtual = _.filter(estoque, (item) => {
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+		return (
+			getYear(itemDate) === ano &&
+			getMonth(itemDate) + 1 === mes &&
+			item.local === "todas"
+		);
 	});
+
+	//estoque Lojas
+	const estoqueMesAtualLojas = _.filter(estoque, (item) => {
+		const loja = store;
+
+		const itemDate = new Date(item.data);
+		return (
+			getYear(itemDate) === ano &&
+			getMonth(itemDate) + 1 === mes &&
+			item.local === loja.toLocaleLowerCase()
+		);
+	});
+
+	const estoqueMesAnteriorLojas = _.filter(estoque, (item) => {
+		const itemDate = new Date(item.data);
+		const loja = store;
+		return (
+			getYear(itemDate) === ano &&
+			getMonth(itemDate) + 1 === mes - 1 &&
+			item.local === loja.toLocaleLowerCase()
+		);
+	});
+
+	//fim estoque lojas
 
 	const estoqueMesAnterior = _.filter(estoque, (item) => {
 		const itemDate = new Date(item.data);
 
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes - 1;
+		return (
+			getYear(itemDate) === ano &&
+			getMonth(itemDate) + 1 === mes - 1 &&
+			item.local === "todas"
+		);
 	});
 
 	const estoqueAtual = parseFloat(
 		estoqueMesAtual.map((e) => e.valor).toString()
 	);
+
+	const estoqueAtualLoja = parseFloat(
+		estoqueMesAtualLojas.map((e) => e.valor).toString()
+	);
+
 	const estoqueAnterior = parseFloat(
 		estoqueMesAnterior.map((e) => e.valor).toString()
 	);
 
+	const estoqueAnteriorLoja = parseFloat(
+		estoqueMesAnteriorLojas.map((e) => e.valor).toString()
+	);
+
 	const CMV = estoqueAnterior + compraMesTotal - estoqueAtual;
+	const CMVLojas =
+		estoqueAnteriorLoja + transferenciaMesTotal - estoqueAtualLoja;
+
 	//fim estoque
 
 	return (
@@ -164,6 +246,29 @@ export default function Index() {
 					<option value='10'>Outubro - 2024</option>
 					<option value='11'>Novembro - 2024</option>
 					<option value='12'>Dezembro - 2024</option>
+				</select>
+
+				<label
+					className=' hidden md:block mr-4 font-light ml-9  text-sm '
+					htmlFor='loja'>
+					LOJA
+				</label>
+				<IoMdArrowDropright className='hidden md:block' />
+				<select
+					className=' rounded text-zinc-600 h-8  pl-5 pr-10 hover:border-gray-400 focus:outline-none '
+					name='loja'
+					defaultValue={store}
+					value={store}
+					onChange={handleStore}>
+					{/* // onChange={(event) => rec.submit(event.target.form)}> */}
+					<option hidden={true} value=''>
+						Selecione a Loja
+					</option>
+					<option value='todas'>Todas</option>
+					<option value='Qi'>QI</option>
+					<option value='Qne'>QNE</option>
+					<option value='Nrt'>NRT</option>
+					<option value='Sds'>SDS</option>
 				</select>
 			</div>
 
@@ -230,29 +335,44 @@ export default function Index() {
 						<Badge
 							variant='outline'
 							className='font-normal  text-sm  font-mono'>
-							{compraMesTotal.toLocaleString("pt-BR", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							})}
+							{store === "todas"
+								? compraMesTotal.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })
+								: transferenciaMesTotal.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })}
 						</Badge>
 					</CardHeader>
 					<CardContent className='grid grid-cols-4 place-items-center space-x-2  mt-4  '>
 						<div className=' grid  place-items-center text-sm'>
-							{estoqueAnterior.toLocaleString("pt-BR", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							})}
+							{store === "todas"
+								? estoqueAnterior.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })
+								: estoqueAnteriorLoja.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })}
 							<Badge
 								variant='secondary'
-								className=' w-full   place-content-center text-center  mt-1 font-light text-green-600  text-xs '>
+								className=' w-full place-content-center text-center  mt-1 font-light text-green-600  text-xs '>
 								Est. Anterior
 							</Badge>
 						</div>
 						<div className=' grid  place-items-center text-sm'>
-							{estoqueAtual.toLocaleString("pt-BR", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							})}
+							{store === "todas"
+								? estoqueAtual.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })
+								: estoqueAtualLoja.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })}
 							<Badge
 								variant='secondary'
 								className=' w-full   place-content-center text-center  mt-1 font-light text-green-600  text-xs '>
@@ -260,10 +380,15 @@ export default function Index() {
 							</Badge>
 						</div>
 						<div className=' grid  place-items-center text-sm'>
-							{CMV.toLocaleString("pt-BR", {
-								minimumFractionDigits: 2,
-								maximumFractionDigits: 2,
-							})}
+							{store === "todas"
+								? CMV.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })
+								: CMVLojas.toLocaleString("pt-BR", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+								  })}
 							<Badge
 								variant='secondary'
 								className=' w-full   place-content-center text-center  mt-1 font-light text-green-600  text-xs '>
@@ -315,7 +440,7 @@ export default function Index() {
 				</Card>
 			</div>
 			<div className='container p-1 mx-auto'>
-				{Fluxomes(receitas, numberMounth, despesas, CMV)}
+				{Fluxomes(receitas, numberMounth, despesas, CMV, store, CMVLojas)}
 			</div>
 		</>
 	);

@@ -37,6 +37,15 @@ model despesas {
     tipo        String?
     comprovante String?
     data        DateTime
+    loja        String?
+}
+
+model transferencias {
+    id      String   @id @default(auto()) @map("_id") @db.ObjectId
+    origem  String
+    destino String
+    valor   Float
+    data    DateTime
 }
 
 model compras {
@@ -69,4 +78,5 @@ model estoque {
     id    String   @id @default(auto()) @map("_id") @db.ObjectId
     valor Float
     data  DateTime
+    local String?
 }

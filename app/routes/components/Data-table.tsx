@@ -73,6 +73,18 @@ export function DataTable<TData, TValue>({
 					/>
 				</div>
 			)}
+			{location === "/transferencias" && (
+				<div className='flex items-center py-4'>
+					<Input
+						placeholder='Filtrar Loja...'
+						value={(table.getColumn("loja")?.getFilterValue() as string) ?? ""}
+						onChange={(event) =>
+							table.getColumn("loja")?.setFilterValue(event.target.value)
+						}
+						className='max-w-sm bg-white/50'
+					/>
+				</div>
+			)}
 			{(location === "/compras" || location === "/despesas") && (
 				<div className='flex items-center py-4'>
 					<Input

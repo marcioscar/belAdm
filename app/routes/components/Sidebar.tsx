@@ -7,6 +7,7 @@ import {
 	FcAddDatabase,
 	FcGoodDecision,
 	FcSportsMode,
+	FcInTransit,
 } from "react-icons/fc";
 
 export default function Sidebar() {
@@ -55,6 +56,21 @@ export default function Sidebar() {
 						</div>
 					</Link>
 					<Link to='/compras/nova'>
+						<div className='flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700'>
+							<FcAddDatabase className='w-6 h-6' />
+							<span className='ml-3 flex-1 whitespace-nowrap'>Nova</span>
+						</div>
+					</Link>
+					<div className=' font-semibold pl-1'>Transferências</div>
+					<Link to='/transferencias'>
+						<div className='flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700'>
+							<FcInTransit className='w-6 h-6' />
+							<span className='ml-3 flex-1 whitespace-nowrap'>
+								Transferências
+							</span>
+						</div>
+					</Link>
+					<Link to='/transferencia/nova'>
 						<div className='flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700'>
 							<FcAddDatabase className='w-6 h-6' />
 							<span className='ml-3 flex-1 whitespace-nowrap'>Nova</span>

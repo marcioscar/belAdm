@@ -18,22 +18,22 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
-export type Despesas = {
+export type Transferencia = {
 	id: string;
-	conta: string;
+	origem: string;
+	destino: string;
 	valor: number;
-	descricao: string;
-	fornecedor: string;
-	tipo: string;
 	data: string;
-	comprovante: string;
-	loja: string;
 };
 
-export const columns: ColumnDef<Despesas>[] = [
+export const columns: ColumnDef<Transferencia>[] = [
 	{
-		accessorKey: "conta",
-		header: "Conta",
+		accessorKey: "origem",
+		header: "Loja Saída",
+	},
+	{
+		accessorKey: "destino",
+		header: "Loja Entrada",
 	},
 	{
 		accessorKey: "valor",
@@ -48,19 +48,7 @@ export const columns: ColumnDef<Despesas>[] = [
 			return <div className='text-right font-medium'>{formatted}</div>;
 		},
 	},
-	{
-		accessorKey: "descricao",
-		header: "Descrição",
-	},
-	{
-		accessorKey: "loja",
-		header: "Loja",
-	},
 
-	{
-		accessorKey: "fornecedor",
-		header: "Fornecedor",
-	},
 	{
 		accessorKey: "data",
 
@@ -81,10 +69,7 @@ export const columns: ColumnDef<Despesas>[] = [
 			</div>
 		),
 	},
-	{
-		accessorKey: "tipo",
-		header: "Tipo",
-	},
+
 	// {
 	// 	accessorKey: "id",
 	// 	header: " ",

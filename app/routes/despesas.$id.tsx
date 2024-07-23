@@ -62,6 +62,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 			descricao: z.string({ required_error: "Preencha a Descricao" }).min(1),
 			tipo: z.string({ required_error: "Preencha a Tipo" }).min(1),
 			conta: z.string({ required_error: "Preencha a Conta" }).min(1),
+			loja: z.string({ required_error: "Preencha a loja" }).min(1),
 			img: z.string().optional(),
 			_action: z.string().optional(),
 		}),

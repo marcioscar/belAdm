@@ -41,6 +41,27 @@ export default function FormDespesa(
 	const [openConta, setOpenConta] = useState(false);
 	const [value, setValue] = useState(despesa?.fornecedor?.toLowerCase());
 	const [valueConta, setValueConta] = useState(despesa?.conta?.toLowerCase());
+	const [valueL, setValueL] = useState(despesa?.loja?.toLowerCase());
+	const [openL, setOpenL] = useState(false);
+
+	const lojas = [
+		{
+			etiqueta: "QI",
+			loja: "qi",
+		},
+		{
+			etiqueta: "QNE",
+			loja: "qne",
+		},
+		{
+			etiqueta: "NRT",
+			loja: "nrt",
+		},
+		{
+			etiqueta: "SDS",
+			loja: "sds",
+		},
+	];
 
 	const [date, setDate] = useState<Date | undefined>(
 		despesa?.data ? new Date(despesa?.data) : new Date()
@@ -66,6 +87,13 @@ export default function FormDespesa(
 					value={valueConta?.charAt(0).toUpperCase() + valueConta?.substring(1)}
 					name='conta'
 					id='conta'
+				/>
+				<input
+					hidden
+					readOnly
+					value={valueL?.charAt(0).toUpperCase() + valueL?.substring(1)}
+					name='loja'
+					id='loja'
 				/>
 
 				<input type='text' hidden readOnly value={date} name='date' id='date' />
@@ -199,6 +227,51 @@ export default function FormDespesa(
 												)}
 											/>
 											{contas.conta}
+										</CommandItem>
+									))}
+								</CommandGroup>
+							</Command>
+						</PopoverContent>
+					</Popover>
+				</FormItem>
+
+				<FormItem className='mt-3'>
+					<Label htmlFor='loja'>Loja</Label>
+					<Popover open={openL} onOpenChange={setOpenL}>
+						<PopoverTrigger asChild>
+							<Button
+								variant='outline'
+								role='combobox'
+								aria-expanded={open}
+								className='w-full justify-between text-zinc-500'>
+								{valueL
+									? lojas.find((lojas: any) => lojas.loja === valueL)?.etiqueta
+									: "Unidade..."}
+								<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent id='loja' className='w-full p-2 rounded-xl my-2'>
+							<Command id='loja'>
+								<CommandInput placeholder='Procurar loja...' />
+								<CommandEmpty>Conta não encontrada</CommandEmpty>
+								<CommandGroup>
+									{lojas?.map((lojas: any) => (
+										<CommandItem
+											key={lojas.loja}
+											value={lojas.loja}
+											onSelect={(currentValueL) => {
+												setValueL(
+													currentValueL === valueL ? "" : currentValueL
+												);
+												setOpenL(false);
+											}}>
+											<Check
+												className={cn(
+													"mr-2 h-4 w-4",
+													valueL === lojas.loja ? "opacity-100" : "opacity-0"
+												)}
+											/>
+											{lojas.etiqueta}
 										</CommandItem>
 									))}
 								</CommandGroup>

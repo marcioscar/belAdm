@@ -21,16 +21,27 @@ export default function Fluxomes(
 	receitas: any,
 	numberMouth: any,
 	despesas: any,
-	CMV: any
+	CMV: any,
+	store: string,
+	CMVLojas: any
 ) {
 	const ano = getYear(new Date());
 	const mes = getMonth(new Date(`2024/${numberMouth}`)) + 1;
 
 	//receitas
+
 	const recMes = _.filter(receitas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.loja === loja.toUpperCase();
 	});
+
 	function recTipoMes() {
 		const tot = _.map(_.groupBy(recMes, "conta"), (conta, idx) => {
 			return { conta: idx, valor: _.sumBy(conta, "valor") };
@@ -38,21 +49,40 @@ export default function Fluxomes(
 		return _.orderBy(tot, ["valor"], ["desc"]);
 	}
 	const recMesTotal = _.sumBy(recMes, "valor");
+
 	//fim receitas
 
 	//despesas
+
 	const despMes = _.filter(despesas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.loja === loja;
 	});
 
+	// const despMes = _.filter(despesas, (item) => {
+	// 	const itemDate = new Date(item.data);
+	// 	return getYear(itemDate) === ano && getMonth(itemDate) + 1 === mes;
+	// });
+
 	const despMesVariavel = _.filter(despesas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return (
-			getYear(itemDate) === ano &&
-			getMonth(itemDate) + 1 === mes &&
-			item.tipo === "variavel"
-		);
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "variavel" &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "variavel" &&
+					item.loja === loja;
 	});
 
 	function grupodespesasVariavel(fornecedor: any) {
@@ -68,13 +98,26 @@ export default function Fluxomes(
 
 	const despMesVariavelTotal = _.sumBy(despMesVariavel, "valor");
 
-	const despMesFixa = _.filter(despMes, (item) => {
+	// const despMesFixa = _.filter(despMes, (item) => {
+	// 	const itemDate = new Date(item.data);
+	// 	return (
+	// 		getYear(itemDate) === ano &&
+	// 		getMonth(itemDate) + 1 === mes &&
+	// 		item.tipo === "fixa"
+	// 	);
+	// });
+
+	const despMesFixa = _.filter(despesas, (item) => {
+		const loja = store;
 		const itemDate = new Date(item.data);
-		return (
-			getYear(itemDate) === ano &&
-			getMonth(itemDate) + 1 === mes &&
-			item.tipo === "fixa"
-		);
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "fixa"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes &&
+					item.tipo === "fixa" &&
+					item.loja === loja;
 	});
 
 	const despMesFixaTotal = _.sumBy(despMesFixa, "valor");
@@ -111,7 +154,8 @@ export default function Fluxomes(
 	//resultados
 	const margemContribuicao = recMesTotal - despMesVariavelTotal;
 	const lucroOperacional = margemContribuicao - despMesFixaTotal;
-	const lucroOperacionalCMV = recMesTotal - (CMV + despMesFixaTotal);
+	const lucroOperacionalCMV =
+		recMesTotal - (store === "todas" ? CMV : CMVLojas + despMesFixaTotal);
 	const pontoEquilibrio =
 		despMesFixaTotal / 1 - despMesVariavelTotal / recMesTotal;
 

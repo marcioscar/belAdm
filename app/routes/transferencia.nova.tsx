@@ -18,11 +18,12 @@ import { parse } from "@conform-to/zod";
 
 import { redirect } from "@vercel/remix";
 
-import FormDespesa from "./components/FormDespesa";
+import FormTransferencia from "./components/FormTransferencia";
 import {
 	createConta,
 	createDespesa,
 	createFornecedor,
+	createTransferencia,
 	getContas,
 	getFornecedores,
 } from "./utils/despesas.server";
@@ -36,56 +37,40 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-	const uploadHandler: UploadHandler = composeUploadHandlers(
-		s3UploadHandler,
-		createMemoryUploadHandler()
-	);
+	const formData = await request.formData();
 
-	const formData = await parseMultipartFormData(request, uploadHandler);
+	let values = Object.fromEntries(formData);
 
-	const action = formData.get("_action");
-
-	if (action === "fornecedor") {
-		let values = Object.fromEntries(formData);
-		await createFornecedor(values);
-	}
-	if (action === "conta") {
-		let values = Object.fromEntries(formData);
-		await createConta(values);
-	}
+	console.log(values);
+	// await createFornecedor(values);
 
 	const submission = parse(formData, {
 		schema: z.object({
-			fornecedor: z.string({ required_error: "Preencha o fornecedor" }).min(3),
+			origem: z.string({ required_error: "Preencha a Loja de Saida" }).min(1),
+			destino: z
+				.string({ required_error: "Preencha a Loja de Entrada" })
+				.min(1),
 			valor: z.string({ required_error: "Preencha o valor" }).min(1),
 			date: z.string({ required_error: "Preencha a Data" }).min(1),
-			descricao: z.string({ required_error: "Preencha a Descricao" }).min(1),
-			tipo: z.string({ required_error: "Preencha a Tipo" }).min(1),
-			conta: z.string({ required_error: "Preencha a Conta" }).min(1),
-			loja: z.string({ required_error: "Preencha a Loja" }).min(1),
-			img: z.string().optional(),
-			_action: z.string().optional(),
 		}),
 	});
 	if (submission.intent !== "submit" || !submission.value) {
 		return json(submission);
 	}
 
-	await createDespesa(submission.value);
+	await createTransferencia(submission.value);
 
-	return redirect("/despesas");
+	return redirect("/transferencias");
 };
 
-export default function CompraNova() {
-	const { fornecedores, contas } = useLoaderData<typeof loader>();
-
+export default function TransferenciaNova() {
 	return (
 		<>
 			<h1 className=' text-center font-semibold text-blue-600 text-xl m-6'>
-				Nova Despesa
+				Nova Transferência
 			</h1>
 			{/* <{FormRec(formas, receita)} /> */}
-			{FormDespesa(fornecedores, contas)}
+			{FormTransferencia()}
 		</>
 	);
 }

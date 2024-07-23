@@ -10,6 +10,16 @@ export const getDespesas = async () => {
     take: 400
   });
 };
+
+export const getTransferencias = async () => {
+  return prisma.transferencias.findMany({
+    orderBy: {
+        data: 'desc'
+    },
+    take: 400
+  });
+};
+
 export const getDespesa = async (despesaId: string) => {
     
   return prisma.despesas.findUnique({
@@ -50,7 +60,8 @@ export const updateDespesa = async (despesa: any) => {
         descricao: despesa.descricao,
         tipo : despesa.tipo, 
         fornecedor: despesa.fornecedor,
-        comprovante: despesa.img
+        comprovante: despesa.img,
+        loja   : despesa.loja,
     },
   });
   return { newReceita };
@@ -66,11 +77,56 @@ export const createDespesa = async(despesa:any)=>{
         descricao: despesa.descricao,
         data    : new Date(despesa.date) ,
         tipo   : despesa.tipo,
+        loja   : despesa.loja,
         fornecedor: despesa.fornecedor,
         comprovante: despesa.img
      }
 })
 
+}
+export const createTransferencia = async(transferencia:any)=>{
+
+    const transf = await prisma.transferencias.create({
+    data:
+        {
+        valor: parseFloat(transferencia.valor.replace(".", "").replace(",", ".")),
+        origem: transferencia.origem,
+        destino: transferencia.destino,
+        data    : new Date(transferencia.date) ,
+        
+     }
+})
+const desp = await prisma.despesas.create({
+    data:
+        {
+        valor: parseFloat(transferencia.valor.replace(".", "").replace(",", ".")),
+        conta    :'transferencia',
+        descricao: transferencia.origem + ' ->  ' + transferencia.destino,
+        data    : new Date(transferencia.date) ,
+        tipo   : 'variavel',
+        loja   : transferencia.destino,
+        fornecedor: transferencia.origem,
+        
+     }
+})
+
+
+    const rec = await prisma.receitas.create({
+    data:
+    {
+    valor: parseFloat(transferencia.valor.replace(".", "").replace(",", ".")),
+    conta    :'transferencia',
+    descricao: transferencia.origem + ' ->  ' + transferencia.destino,
+    loja   : transferencia.origem.toUpperCase(),    
+    data    : new Date(transferencia.date) ,
+    status   : 'Recebido',
+    carteira   : 'transferencia'
+    }
+})
+
+
+
+return [transf ,desp, rec]
 }
 
 export const baixarReceita = async (id: any) => {
