@@ -14,6 +14,23 @@ import { getMonth, getYear } from "date-fns";
 import { getCompras, getEstoque } from "./utils/compras.server";
 import Fluxomes from "./components/Fluxomes";
 import { requireUserSession } from "./utils/auth.server";
+
+//graficos
+
+import { Chart as ChartJS } from "chart.js/auto";
+import {
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	PointElement,
+	LineElement,
+	Title,
+	Tooltip,
+	Legend,
+	PieController,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	await requireUserSession(request);
 	const receitas = await getReceitas();
@@ -208,6 +225,152 @@ export default function Index() {
 		estoqueAnteriorLoja + transferenciaMesTotal - estoqueAtualLoja;
 
 	//fim estoque
+
+	//graficos
+	ChartJS.register(
+		CategoryScale,
+		LinearScale,
+		PointElement,
+		BarElement,
+		LineElement,
+		Title,
+		Tooltip,
+		Legend,
+		PieController,
+		Tooltip,
+		Legend
+	);
+	const optionsLineRec = {
+		responsive: true,
+		plugins: {
+			legend: {
+				position: "top" as const,
+			},
+			title: {
+				display: true,
+
+				text:
+					"Receitas + " +
+					recMesTotal.toLocaleString("pt-BR", {
+						minimumFractionDigits: 2,
+						maximumFractionDigits: 2,
+					}) +
+					" | Despesas - " +
+					despMesTotal.toLocaleString("pt-BR", {
+						minimumFractionDigits: 2,
+						maximumFractionDigits: 2,
+					}),
+			},
+		},
+	};
+
+	const labelMes = [
+		"01",
+		"02",
+		"03",
+		"04",
+		"05",
+		"06",
+		"07",
+		"08",
+		"09",
+		"10",
+		"11",
+		"12",
+		"13",
+		"14",
+		"15",
+		"16",
+		"17",
+		"18",
+		"19",
+		"20",
+		"21",
+		"22",
+		"23",
+		"24",
+		"25",
+		"26",
+		"27",
+		"28",
+		"29",
+		"30",
+		"31",
+	];
+	//fim graficos
+
+	//mapa receitas
+
+	function recDiaf() {
+		const tot = _.map(
+			_.groupBy(recMes, (item) => item.data.slice(8, 10)),
+			(dia, idx) => {
+				return { dia: idx, valor: _.sumBy(dia, "valor") };
+			}
+		);
+
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
+	const recDia = recDiaf();
+
+	const dataRec = _.map(
+		labelMes
+			.map((l) => _.filter(recDia, ["dia", l]))
+			.map((d) => d.map((c) => c?.valor))
+	);
+
+	let dataChartRec = dataRec.flatMap((element) =>
+		Array.isArray(element) && element.length === 0 ? 0 : element
+	);
+
+	let sum = 0;
+	let accumulated = dataChartRec.map((value) => (sum += value));
+
+	//fim mapa receitas
+	//mapa despesas
+
+	function despDiaf() {
+		const tot = _.map(
+			_.groupBy(despMes, (item) => item.data.slice(8, 10)),
+			(dia, idx) => {
+				return { dia: idx, valor: _.sumBy(dia, "valor") };
+			}
+		);
+
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
+	const despDia = despDiaf();
+
+	const dataDesp = _.map(
+		labelMes
+			.map((l) => _.filter(despDia, ["dia", l]))
+			.map((d) => d.map((c) => c?.valor))
+	);
+	let dataChartDesp = dataDesp.flatMap((element) =>
+		Array.isArray(element) && element.length === 0 ? 0 : element
+	);
+	let sumDesp = 0;
+	let accumulatedDesp = dataChartDesp.map((value) => (sumDesp += value));
+
+	//fim mapa despesas
+	//data graficos
+	const dataRecChart = {
+		labels: labelMes,
+		datasets: [
+			{
+				label: "Receitas",
+				data: accumulated,
+				borderColor: "#008282",
+				backgroundColor: "#008282",
+			},
+			{
+				label: "Despesas",
+				data: accumulatedDesp,
+				borderColor: "#ed254e",
+				backgroundColor: "#ed254e",
+			},
+		],
+	};
 
 	return (
 		<>
@@ -437,6 +600,9 @@ export default function Index() {
 							</div>
 						))}
 					</CardContent>
+				</Card>
+				<Card className='xl:col-span-3 col-span-2 container w-11/12  shadow border border-white/50 bg-white/80'>
+					<Line options={optionsLineRec} data={dataRecChart} />
 				</Card>
 			</div>
 			<div className='container p-1 mx-auto'>

@@ -128,6 +128,9 @@ export default function Fluxomes(
 		});
 		return _.orderBy(tot, ["valor"], ["desc"]);
 	}
+
+	console.log(despTipoMes());
+
 	function despTipoMesVariavel() {
 		const tot = _.map(
 			_.groupBy(despMesVariavel, "fornecedor"),

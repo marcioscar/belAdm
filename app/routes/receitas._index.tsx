@@ -18,8 +18,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 	const formData = await request.formData();
 	let values = Object.fromEntries(formData);
 
-	console.log(values);
-
 	if (values._action === "delete") {
 		await deleteReceita(values);
 		return redirect(`.`);

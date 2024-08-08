@@ -7,7 +7,7 @@ export const getDespesas = async () => {
     orderBy: {
         data: 'desc'
     },
-    take: 400
+    take: 600
   });
 };
 

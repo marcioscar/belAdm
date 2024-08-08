@@ -90,7 +90,7 @@ export default function FormRec(formas: any, receita?: any) {
 	const [value, setValue] = useState(receita?.conta.toLowerCase());
 	const [valueL, setValueL] = useState(receita?.loja.toLowerCase());
 	const [valueC, setValueC] = useState(receita?.carteira?.toLowerCase());
-	console.log(valueC);
+
 	const [date, setDate] = useState<Date | undefined>(
 		receita?.data ? new Date(receita?.data) : new Date()
 	);
