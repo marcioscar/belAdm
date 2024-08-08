@@ -437,10 +437,10 @@ export default function Index() {
 
 			<div className='grid gap-4 mt-2 container px-2 mx-auto  md:grid-cols-2 xl:grid-cols-3 '>
 				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+					<CardHeader className='flex bg-zinc-200 rounded-t-lg  flex-row items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl font-medium'>Receitas</CardTitle>
 						<Badge
-							variant='outline'
+							variant='secondary'
 							className=' font-normal  text-sm  font-mono'>
 							{recMesTotal.toLocaleString("pt-BR", {
 								minimumFractionDigits: 2,
@@ -465,10 +465,10 @@ export default function Index() {
 					</CardContent>
 				</Card>
 				<Card>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+					<CardHeader className='flex flex-row bg-zinc-200 rounded-t-lg  items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Despesas</CardTitle>
 						<Badge
-							variant='outline'
+							variant='secondary'
 							className='font-normal  text-sm  font-mono'>
 							{despMesTotal.toLocaleString("pt-BR", {
 								minimumFractionDigits: 2,
@@ -493,10 +493,10 @@ export default function Index() {
 					</CardContent>
 				</Card>
 				<Card className=''>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+					<CardHeader className='flex flex-row items-center bg-zinc-200 rounded-t-lg justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Compras</CardTitle>
 						<Badge
-							variant='outline'
+							variant='secondary'
 							className='font-normal  text-sm  font-mono'>
 							{store === "todas"
 								? compraMesTotal.toLocaleString("pt-BR", {
@@ -572,7 +572,7 @@ export default function Index() {
 					</CardContent>
 				</Card>
 				<Card className='xl:col-span-3 shadow border border-white/50 bg-white/80'>
-					<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+					<CardHeader className='flex flex-row bg-zinc-200 rounded-t-lg   items-center justify-between space-y-0 pb-2'>
 						<CardTitle className=' text-xl  font-medium'>Carteiras</CardTitle>
 						{/* <Badge
 							variant='outline'
@@ -601,7 +601,7 @@ export default function Index() {
 						))}
 					</CardContent>
 				</Card>
-				<Card className='xl:col-span-3 col-span-2 container w-11/12  shadow border border-white/50 bg-white/80'>
+				<Card className='xl:col-span-3 col-span-2 xl:w-full container w-11/12  shadow border border-white/50 bg-white/80'>
 					<Line options={optionsLineRec} data={dataRecChart} />
 				</Card>
 			</div>
