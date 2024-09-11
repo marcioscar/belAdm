@@ -4,6 +4,7 @@ import {
 	AccordionItem,
 	AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 import {
 	Table,
 	TableBody,
@@ -42,13 +43,36 @@ export default function Fluxomes(
 					item.loja === loja.toUpperCase();
 	});
 
+	const recMesAnterior = _.filter(receitas, (item) => {
+		const loja = store;
+		const itemDate = new Date(item.data);
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.loja === loja.toUpperCase();
+	});
+
 	function recTipoMes() {
 		const tot = _.map(_.groupBy(recMes, "conta"), (conta, idx) => {
 			return { conta: idx, valor: _.sumBy(conta, "valor") };
 		});
 		return _.orderBy(tot, ["valor"], ["desc"]);
 	}
+	function recTipoMesAnterior() {
+		const tot = _.map(_.groupBy(recMesAnterior, "conta"), (conta, idx) => {
+			return { conta: idx, valor: _.sumBy(conta, "valor") };
+		});
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
 	const recMesTotal = _.sumBy(recMes, "valor");
+	const recMesTotalAnterior = _.sumBy(recMesAnterior, "valor");
+
+	console.log(
+		_.filter(recTipoMesAnterior(), { conta: "pix" }).map((m) => m.valor)
+	);
 
 	//fim receitas
 
@@ -85,6 +109,19 @@ export default function Fluxomes(
 					item.loja === loja;
 	});
 
+	const despMesVariavelAnterior = _.filter(despesas, (item) => {
+		const loja = store;
+		const itemDate = new Date(item.data);
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.tipo === "variavel" &&
+					item.conta !== "transferencia"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.tipo === "variavel" &&
+					item.loja === loja;
+	});
 	function grupodespesasVariavel(fornecedor: any) {
 		const desp = _.groupBy(
 			despMesVariavel.filter((o: { tipo: string; fornecedor: string }) =>
@@ -97,6 +134,10 @@ export default function Fluxomes(
 	}
 
 	const despMesVariavelTotal = _.sumBy(despMesVariavel, "valor");
+	const despMesVariavelTotalAnterior = _.sumBy(
+		despMesVariavelAnterior,
+		"valor"
+	);
 
 	// const despMesFixa = _.filter(despMes, (item) => {
 	// 	const itemDate = new Date(item.data);
@@ -119,8 +160,22 @@ export default function Fluxomes(
 					item.tipo === "fixa" &&
 					item.loja === loja;
 	});
+	const despMesFixaAnterior = _.filter(despesas, (item) => {
+		const loja = store;
+		const itemDate = new Date(item.data);
+
+		return loja === "todas"
+			? getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.tipo === "fixa"
+			: getYear(itemDate) === ano &&
+					getMonth(itemDate) + 1 === mes - 1 &&
+					item.tipo === "fixa" &&
+					item.loja === loja;
+	});
 
 	const despMesFixaTotal = _.sumBy(despMesFixa, "valor");
+	const despMesFixaTotalAnterior = _.sumBy(despMesFixaAnterior, "valor");
 
 	function despTipoMes() {
 		const tot = _.map(_.groupBy(despMesFixa, "conta"), (conta, idx) => {
@@ -128,12 +183,26 @@ export default function Fluxomes(
 		});
 		return _.orderBy(tot, ["valor"], ["desc"]);
 	}
-
-	console.log(despTipoMes());
+	function despTipoMesAnterior() {
+		const tot = _.map(_.groupBy(despMesFixaAnterior, "conta"), (conta, idx) => {
+			return { conta: idx, valor: _.sumBy(conta, "valor") };
+		});
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
 
 	function despTipoMesVariavel() {
 		const tot = _.map(
 			_.groupBy(despMesVariavel, "fornecedor"),
+			(fornecedor, idx) => {
+				return { conta: idx, valor: _.sumBy(fornecedor, "valor") };
+			}
+		);
+		return _.orderBy(tot, ["valor"], ["desc"]);
+	}
+
+	function despTipoMesVariavelAnterior() {
+		const tot = _.map(
+			_.groupBy(despMesVariavelAnterior, "fornecedor"),
 			(fornecedor, idx) => {
 				return { conta: idx, valor: _.sumBy(fornecedor, "valor") };
 			}
@@ -156,6 +225,9 @@ export default function Fluxomes(
 
 	//resultados
 	const margemContribuicao = recMesTotal - despMesVariavelTotal;
+	const margemContribuicaoAnterior =
+		recMesTotalAnterior - despMesVariavelTotalAnterior;
+
 	const lucroOperacional = margemContribuicao - despMesFixaTotal;
 	const lucroOperacionalCMV =
 		recMesTotal - (store === "todas" ? CMV : CMVLojas + despMesFixaTotal);
@@ -175,7 +247,10 @@ export default function Fluxomes(
 						Valor
 					</TableHead>
 					<TableHead className='text-white font-medium text-center'>
-						AV
+						% receita
+					</TableHead>
+					<TableHead className='text-white font-medium '>
+						% mês anterior
 					</TableHead>
 				</TableRow>
 			</TableHeader>
@@ -207,6 +282,7 @@ export default function Fluxomes(
 							style: "percent",
 						}).format(lucroOperacional / recMesTotal)}
 					</TableCell>
+					<TableCell></TableCell>
 				</TableRow>
 				<TableRow className=' bg-zinc-100 text-violet-700'>
 					<TableCell className='font-medium'>Ponto de Equilíbrio</TableCell>
@@ -216,6 +292,7 @@ export default function Fluxomes(
 							maximumFractionDigits: 2,
 						})}
 					</TableCell>
+					<TableCell></TableCell>
 					<TableCell></TableCell>
 				</TableRow>
 				<TableRow className='bg-stone-50'>
@@ -227,9 +304,22 @@ export default function Fluxomes(
 						})}
 					</TableCell>
 					<TableCell></TableCell>
+					<Badge
+						className={
+							recMesTotal / recMesTotalAnterior - 1 < 0
+								? "font-medium text-center bg-red-600 font-mono"
+								: "font-medium text-center bg-green-700 font-mono"
+						}>
+						<TableCell>
+							{new Intl.NumberFormat("de-DE", {
+								style: "percent",
+							}).format(recMesTotal / recMesTotalAnterior - 1)}
+						</TableCell>
+					</Badge>
 				</TableRow>
 				<TableRow className='bg-stone-50'>
 					<TableCell className='font-medium'>Receitas </TableCell>
+					<TableCell></TableCell>
 					<TableCell></TableCell>
 					<TableCell></TableCell>
 				</TableRow>
@@ -249,6 +339,33 @@ export default function Fluxomes(
 								style: "percent",
 							}).format(rec.valor / recMesTotal)}
 						</TableCell>
+						<Badge
+							className={
+								rec.valor /
+									Number(
+										_.filter(recTipoMesAnterior(), { conta: rec.conta }).map(
+											(m) => m.valor
+										)
+									) -
+									1 <
+								0
+									? "font-medium bg-red-600 text-center font-mono"
+									: "font-medium bg-green-700 text-center font-mono"
+							}>
+							<TableCell>
+								{new Intl.NumberFormat("de-DE", {
+									style: "percent",
+								}).format(
+									rec.valor /
+										Number(
+											_.filter(recTipoMesAnterior(), { conta: rec.conta }).map(
+												(m) => m.valor
+											)
+										) -
+										1
+								)}
+							</TableCell>
+						</Badge>
 					</TableRow>
 				))}
 				<TableRow className='bg-stone-50'>
@@ -264,6 +381,20 @@ export default function Fluxomes(
 							style: "percent",
 						}).format(despMesVariavelTotal / recMesTotal)}
 					</TableCell>
+					<Badge
+						className={
+							despMesVariavelTotal / despMesVariavelTotalAnterior - 1 < 0
+								? "font-mono bg-green-700 text-center"
+								: " bg-red-600 font-mono text-center"
+						}>
+						<TableCell>
+							{new Intl.NumberFormat("de-DE", {
+								style: "percent",
+							}).format(
+								despMesVariavelTotal / despMesVariavelTotalAnterior - 1
+							)}
+						</TableCell>
+					</Badge>
 				</TableRow>
 				{despTipoMesVariavel().map((f: any, index) => (
 					<TableRow className='bg-stone-50' key={index}>
@@ -316,6 +447,33 @@ export default function Fluxomes(
 								style: "percent",
 							}).format(f.valor / despMesVariavelTotal)}
 						</TableCell>
+						<Badge
+							className={
+								f.valor /
+									Number(
+										_.filter(despTipoMesVariavelAnterior(), {
+											conta: f.conta,
+										}).map((m) => m.valor)
+									) -
+									1 <
+								0
+									? "font-medium mt-1   bg-green-700 font-mono"
+									: "font-medium  mt-1 bg-red-600 font-mono"
+							}>
+							<TableCell>
+								{new Intl.NumberFormat("de-DE", {
+									style: "percent",
+								}).format(
+									f.valor /
+										Number(
+											_.filter(despTipoMesVariavelAnterior(), {
+												conta: f.conta,
+											}).map((m) => m.valor)
+										) -
+										1
+								)}
+							</TableCell>
+						</Badge>
 					</TableRow>
 				))}
 				<TableRow className='bg-stone-50'>
@@ -331,6 +489,13 @@ export default function Fluxomes(
 							style: "percent",
 						}).format(margemContribuicao / recMesTotal)}
 					</TableCell>
+					<Badge>
+						<TableCell className='font-mono text-center'>
+							{new Intl.NumberFormat("de-DE", {
+								style: "percent",
+							}).format(margemContribuicao / margemContribuicaoAnterior - 1)}
+						</TableCell>
+					</Badge>
 				</TableRow>
 				<TableRow className='bg-stone-50'>
 					<TableCell className='font-medium'>Despesas Fixas</TableCell>
@@ -340,11 +505,23 @@ export default function Fluxomes(
 							maximumFractionDigits: 2,
 						})}
 					</TableCell>
-					<TableCell className='font-mono text-center '>
+					<TableCell className='font-mono text-center'>
 						{new Intl.NumberFormat("de-DE", {
 							style: "percent",
 						}).format(despMesFixaTotal / recMesTotal)}
 					</TableCell>
+					<Badge
+						className={
+							despMesFixaTotal / despMesFixaTotalAnterior - 1 < 0
+								? "font-mono m-0.5  bg-green-700 "
+								: "font-mono  m-0.5 bg-red-500 "
+						}>
+						<TableCell>
+							{new Intl.NumberFormat("de-DE", {
+								style: "percent",
+							}).format(despMesFixaTotal / despMesFixaTotalAnterior - 1)}
+						</TableCell>
+					</Badge>
 				</TableRow>
 				{despTipoMes().map((f: any, index) => (
 					<TableRow className='bg-stone-50' key={index}>
@@ -393,6 +570,33 @@ export default function Fluxomes(
 								style: "percent",
 							}).format(f.valor / despMesFixaTotal)}
 						</TableCell>
+						<Badge
+							className={
+								f.valor /
+									Number(
+										_.filter(despTipoMesAnterior(), {
+											conta: f.conta,
+										}).map((m) => m.valor)
+									) -
+									1 >
+								1
+									? "font-medium text-center font-mono m-0.5 bg-red-500"
+									: "font-medium text-center font-mono m-0.5 bg-green-700"
+							}>
+							<TableCell>
+								{new Intl.NumberFormat("de-DE", {
+									style: "percent",
+								}).format(
+									f.valor /
+										Number(
+											_.filter(despTipoMesAnterior(), {
+												conta: f.conta,
+											}).map((m) => m.valor)
+										) -
+										1
+								)}
+							</TableCell>
+						</Badge>
 					</TableRow>
 				))}
 			</TableBody>
