@@ -232,7 +232,7 @@ export default function Fluxomes(
 	const lucroOperacionalCMV =
 		recMesTotal - (store === "todas" ? CMV : CMVLojas + despMesFixaTotal);
 	const pontoEquilibrio =
-		despMesFixaTotal / 1 - despMesVariavelTotal / recMesTotal;
+		despMesFixaTotal / (1 - despMesVariavelTotal / recMesTotal);
 
 	//fim resultados
 
